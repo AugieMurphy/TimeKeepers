@@ -1,66 +1,44 @@
-/* Team MadSmarts -- Jeffrey Lin, Leo Liu, Gabi Newman, Allard Peng
+/* Team TimeKeepers -- Jeffrey Lin, Augie Murphy, Gabi Newman
  * APCS2 period 03
- * LAB00 -- What Does the Data Say?
- * 2017-02-14
+ * LAB01 -- What Does the Data Say?
+ * 2017-03-09
  */
 
-/** MergeSortTester.
+/** QuickSortTester.
  *
- * ALGORITHM:
- * Take the array and split it into two arrays that are equivalent in size.
- * Continue splitting each array until they have two items each, keeping track
- * of the parent array.  Sort each individual two-item array.  Merge two decks
- * together to form the parent pile.  Continue to merge until there is one
- * sorted deck.
- *
- * BIG-OH CLASSIFICATION OF ALGORITHM:
- * O(n)
- *
- * Mean execution times for dataset of size n:
- *  Batch size:
- *  n=    1     time:     361 nanoseconds
- *  n=   10     time:    3253 nanoseconds
- *  n=  100     time:   32765 nanoseconds
- *  n=10000     time: 4002642 nanoseconds
- *
- * ANALYSIS:
- * We can run various regressions to see which line of best fit is most
- * applicable to the data. If we run a Linear Regression (ax+b) on the data
- * above, we get the line $y = 400.5276654x - 2678.556315$ with an r value of
- * 0.9999973273. This suggests that the data creates a linear trend.
+ * Timing Mechanism:
+ *  One run of qsort() is considered a round. ROUNDS rounds are performed per data size. At the end
+ *  of the test, the average is calculated (time / ROUNDS) and printed to stdout in a CSV format.
  */
 
 public class QuickSortTester {
-    private static final long ROUNDS = 10000;
-    private static final int    SIZE = 1000 + (int)( Math.random() * 1000 );
+  private static final long ROUNDS = 100;
+  private static       int  size   = 100;
 
-    /** Execution time analysis.
-     * Create an array of size SIZE and populate it with arbitary values and
-     * run merge sort on the array. Repeat ROUNDS times, then divide the total
-     * amount of time spent by ROUNDS to obtain the average.
-     */
-    public static void main( String[] args ) {
-        System.out.println("Running " + ROUNDS + " rounds of testing.\n");
-        System.out.format("%s%30s%n", "Length", "Time (nanoseconds)");
+  public static void main( String[] args ) {
+    System.out.format("Running %s rounds of testing with initial size %s.\n", ROUNDS, size);
+    System.out.format("%s,%s\n", "size", "average");
 
-        long time = 0;
-        long s = 0;
-        long e = 0;
-        int[] data = new int[SIZE];
+    long s = 0;
+    long time = 0;
 
-        for ( long rounds = ROUNDS; rounds > 0; rounds-- ) {
-            for ( int i = 0; i < data.length; i++ ) {
-                data[i] = (int) ( 1000 * Math.random() );
-            }
+    while ( size > 0 ) {
+      int[] data = new int[size];
 
-            s = System.nanoTime();
-            QuickSort.qsort(data);
-            e = System.nanoTime();
-
-            time += (e - s);
+      for ( long rounds = ROUNDS; rounds > 0; rounds-- ) {
+        for ( int i = 0; i < data.length; i++ ) {
+          data[i] = (int) ( 1000 * Math.random() );
         }
 
-        System.out.format("%s%20s%n", data.length, time / ROUNDS);
+        s = System.nanoTime();
+        QuickSort.qsort(data);
+        time += (System.nanoTime() - s);
+      }
+
+      System.out.format("%s,%s\n", data.length, time / ROUNDS);
+      time = 0;
+      size *= 10;
     }
+  }
 }
 
